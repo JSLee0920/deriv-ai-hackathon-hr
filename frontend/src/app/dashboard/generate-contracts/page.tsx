@@ -14,14 +14,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { json } from "stream/consumers";
 
 const contractTypeLabels = [
-  { label: "Employment Contract", value: "employment_contract" },
-  { label: "Non-Disclosure Agreement", value: "nda" },
-  { label: "Offer Letter", value: "offer-letter" },
-  { label: "Option Grant Letter", value: "option-grant" },
-  { label: "Vesting Schedule", value: "vesting-schedule" },
+  { label: "Employment Contract", value: "Employment Contract" },
+  { label: "Non-Disclosure Agreement", value: "Non-Disclosure Agreement" },
+  { label: "Offer Letter", value: "Offer Letter" },
+  { label: "Option Grant Letter", value: "Option Grant Letter" },
+  { label: "Vesting Schedule", value: "Vesting Schedule" },
 ];
 
 const supportedLocations = [
@@ -33,14 +32,15 @@ const supportedLocations = [
 export default function ContractsPage() {
   const [generating, setGenerating] = useState(false);
   const [formData, setFormData] = useState({
-    contract_type: "employment_contract",
+    document_type: "Employment Contract",
     employee_name: "",
     role: "",
     department: "",
     salary: "",
-    effective_date: "",
+    start_date: "",
     location: "malaysia",
     address: "",
+    additional_clauses: "",
   });
 
   // For Testing
@@ -51,12 +51,19 @@ export default function ContractsPage() {
     setGenerating(true);
 
     await new Promise((resolve) => setTimeout(resolve, 2000));
-    const jsonData = JSON.stringify(formData, null, 2);
+    const jsonData = JSON.stringify(
+      {
+        ...formData,
+        salary: `RM ${formData.salary}`,
+      },
+      null,
+      2,
+    );
     setJsonOutput(jsonData);
 
     // API call to generate document
     setGenerating(false);
-  }
+  };
 
   return (
     <div className="flex flex-col gap-8">
@@ -82,9 +89,9 @@ export default function ContractsPage() {
                 Document Type
               </Label>
               <Select
-                value={formData.contract_type}
+                value={formData.document_type}
                 onValueChange={(value) => {
-                  setFormData({ ...formData, contract_type: value });
+                  setFormData({ ...formData, document_type: value });
                 }}
               >
                 <SelectTrigger className="w-full border-border bg-secondary text-foreground">
@@ -159,15 +166,15 @@ export default function ContractsPage() {
               </div>
               <div className="flex flex-col gap-2">
                 <Label className="text-sm font-medium text-foreground">
-                  Effective Date
+                  Start Date
                 </Label>
                 <Input
                   type="date"
-                  value={formData.effective_date}
+                  value={formData.start_date}
                   onChange={(e) => {
                     setFormData({
                       ...formData,
-                      effective_date: e.target.value,
+                      start_date: e.target.value,
                     });
                   }}
                   className="border-border bg-secondary text-foreground placeholder:text-muted-foreground"
@@ -212,17 +219,22 @@ export default function ContractsPage() {
               />
             </div>
 
-            {/* <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2">
               <Label className="text-sm font-medium text-foreground">
                 Additional Clauses
               </Label>
               <Textarea
                 placeholder="e.g., remote work policy, probation period, stipulations, etc."
-                // value=
-                // onChange={(e) => {
+                value={formData.additional_clauses}
+                onChange={(e) => {
+                  setFormData({
+                    ...formData,
+                    additional_clauses: e.target.value,
+                  });
+                }}
                 className="border-border bg-secondary text-foreground placeholder:text-muted-foreground"
               />
-            </div> */}
+            </div>
 
             <div className="flex">
               <Button
