@@ -40,7 +40,7 @@ export default function AIAssistantPage() {
   const [isTyping, setIsTyping] = useState<boolean>(false);
   // const scrollRef = useRef<HTMLDivElement>(null);
 
-  const handleSend = (text?: string) => {
+  const handleSend = async (text?: string) => {
     const messageText = text || input.trim();
     if (!messageText) return;
 
@@ -59,7 +59,31 @@ export default function AIAssistantPage() {
     setInput("");
     setIsTyping(true);
 
-    // Now call the actual API
+    const response = await fetch("/api/assistant", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ message: messageText }),
+    });
+
+    const data = await response.json();
+    console.log("AI Assistant response data:", data);
+
+    setIsTyping(false);
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: id + 2,
+        role: "assistant",
+        content: data.answer,
+        timestamp: new Date().toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+      },
+    ]);
+    setId((prev) => prev + 1);
   };
 
   return (

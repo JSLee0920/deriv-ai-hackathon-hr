@@ -14,6 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import Markdown from "react-markdown";
 
 const contractTypeLabels = [
   { label: "Employment Contract", value: "Employment Contract" },
@@ -44,25 +45,29 @@ export default function ContractsPage() {
   });
 
   // For Testing
-  const [jsonOutput, setJsonOutput] = useState<string>("");
+  const [output, setOutput] = useState<string>("");
 
   // Replace with actual API call
   const handleGenerate = async () => {
-    setGenerating(true);
+    try {
+      setGenerating(true);
 
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    const jsonData = JSON.stringify(
-      {
-        ...formData,
-        salary: `RM ${formData.salary}`,
-      },
-      null,
-      2,
-    );
-    setJsonOutput(jsonData);
+      const response = await fetch("/api/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
 
-    // API call to generate document
-    setGenerating(false);
+      const data = await response.json();
+      console.log("API response data:", data);
+      setOutput(data.document);
+      setGenerating(false);
+    } catch (error) {
+      console.error("Error generating document:", error);
+      setGenerating(false);
+    }
   };
 
   return (
@@ -266,9 +271,12 @@ export default function ContractsPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <pre className="max-h-150 overflow-auto rounded-md bg-secondary p-4 text-sm text-foreground">
-              {jsonOutput || "No document generated yet."}
-            </pre>
+            {/* <pre className="max-h-150 overflow-auto rounded-md bg-secondary p-4 text-sm text-foreground">
+              {output || "No document generated yet."}
+            </pre> */}
+            <article className="markdown-body">
+              <Markdown>{output || "No document generated yet."}</Markdown>
+            </article>
           </CardContent>
         </Card>
       </div>
