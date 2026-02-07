@@ -5,10 +5,41 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client-py"
+  interface      = "asyncio"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("DATABASE_URL")   # Ignore this error
+}
+
+model Employee {
+  id          String   @id @default(uuid())
+  name        String
+  email       String   @unique
+  role        String
+  location    String
+  salary      Float
+  isForeign   Boolean  @default(false)
+  visaExpiry  DateTime?
+  contracts   Contract[]
+  auditLogs   AuditLog[]
+}
+
+model Contract {
+  id          String   @id @default(uuid())
+  type        String
+  status      String   @default("DRAFT")
+  content     String   @db.Text
+  employeeId  String
+  employee    Employee @relation(fields: [employeeId], references: [id])
+}
+
+model AuditLog {
+  id          String   @id @default(uuid())
+  action      String
+  timestamp   DateTime @default(now())
+  employeeId  String?
+  employee    Employee? @relation(fields: [employeeId], references: [id])
 }
