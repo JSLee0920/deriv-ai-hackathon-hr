@@ -16,7 +16,7 @@ import { usePathname } from "next/navigation";
 const navItem = [
   { label: "Overview", href: "/dashboard/overview", icon: LayoutDashboard },
   {
-    label: "Generate Contract",
+    label: "Generate Contracts",
     href: "/dashboard/generate-contracts",
     icon: FileText,
   },
