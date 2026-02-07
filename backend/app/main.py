@@ -3,10 +3,19 @@ from pydantic import BaseModel
 from langchain_core.messages import HumanMessage
 from .graph.supervisor import app as hr_graph
 from typing import Optional
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(
     title="AetherHR API Gateway",
     description="Backend for HR Assistant (RAG) and Intelligent Document Generation"
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 class ChatRequest(BaseModel):
