@@ -6,3 +6,8 @@ prisma
 chromadb
 jinja2
 pymupdf4llm
+langchain-google-genai
+python-dotenv
+langchain
+langchain_community
+pypdf
