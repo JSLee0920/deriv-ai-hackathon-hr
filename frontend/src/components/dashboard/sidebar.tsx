@@ -42,11 +42,11 @@ function Sidebar() {
       <div>
         <div className="flex items-center gap-2 border-b border-sidebar-border px-4 py-5">
           <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary">
-            <span className="text-sm font-bold text-primary-foreground">D</span>
+            <span className="text-sm font-bold text-primary-foreground">A</span>
           </div>
           {!isCollapsed && (
             <span className="text-lg font-bold text-sidebar-foreground">
-              DerivHR
+              AetherHR
             </span>
           )}
         </div>
