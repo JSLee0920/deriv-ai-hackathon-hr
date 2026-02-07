@@ -128,13 +128,17 @@ def contract_drafting_node(state):
         template_content = f"Standard {doc_type} Template."
 
     prompt = ChatPromptTemplate.from_messages([
-        ("system", "You are an expert HR Lawyer. Rewrite the provided Template into a professional document.\n"
-                   "RULES:\n"
-                   "1. **Format:** Output clean MARKDOWN (use ## for headers).\n"
-                   "2. **Context:** You are writing a {doc_type}.\n"
-                   "3. **Fill Details:** Use the Data provided. If a field (like Salary) is irrelevant for this document type (like an NDA), ignore it.\n"
-                   "4. **Custom Clauses:** If 'additional_clauses' are present, append them as '## Special Terms'.\n"),
-        ("human", "DATA:\n{data_input}\n\nTEMPLATE SOURCE:\n{template_input}")
+        ("system", """You are an expert HR Lawyer. Your task is to rewrite the provided Template into a professional document.
+        
+        CRITICAL RULES:
+        1. **Override Everything**: The provided DATA is the absolute truth. If the Data says 'RM' but the Template says 'SGD', you MUST use 'RM'.
+        2. **No Placeholders**: You are strictly forbidden from leaving text in brackets like [Current Date] or [Address]. If a piece of information is missing from the Data, use common sense (e.g., for Date, use today's date) or remove the bracketed section entirely.
+        3. **Formatting**: Output clean MARKDOWN. 
+        4. **Specific Mapping**: 
+           - Map 'start_date' from Data to 'Commencement Date' in the document.
+           - Map 'address' from Data to 'Employee Residential Address'.
+        5. **Legal Accuracy**: Maintain the legal tone of the template, but ensure all names and numbers are updated."""),
+        ("human", "DATA FROM FRONTEND:\n{data_input}\n\nRAW TEMPLATE TEXT:\n{template_input}")
     ])
     
     chain = prompt | llm
