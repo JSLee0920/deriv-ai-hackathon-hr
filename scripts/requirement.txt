@@ -4,3 +4,5 @@ langgraph
 langchain-groq
 prisma
 chromadb
+jinja2
+pymupdf4llm
