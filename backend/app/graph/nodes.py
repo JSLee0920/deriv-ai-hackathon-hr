@@ -9,8 +9,17 @@ from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate
 from pydantic import BaseModel, Field
 from langchain_community.document_loaders import PyPDFLoader
+from langchain_chroma import Chroma
+from langchain_huggingface import HuggingFaceEmbeddings
+
 
 llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0)
+
+# RAG
+embeddings = HuggingFaceEmbeddings(model_name="BAAI/bge-small-en-v1.5")
+vectorstore = Chroma(persist_directory="backend/chroma_db", embedding_function=embeddings)
+retriever = vectorstore.as_retriever(search_kwargs={"k": 3})
+
 
 class ContractDetails(BaseModel):
     document_type: str = Field(description="The type of document (e.g. Employment Contract, NDA)", default="Employment Contract")
@@ -128,3 +137,43 @@ def contract_drafting_node(state):
         "final_document": result.content,
         "messages": [AIMessage(content=f"{doc_type} generated for {data['employee_name']}.")]
     }
+    
+def router_node(state):
+    # Branches logic based on user intent.
+    last_msg = state['messages'][-1].content.lower()
+    if any(k in last_msg for k in ["generate", "contract", "nda"]):
+        return "extractor"
+    return "assistant"
+
+# HR Assistant
+def assistant_node(state):
+    query = state['messages'][-1].content
+    docs = retriever.invoke(query)
+    context = "\n\n".join([doc.page_content for doc in docs])
+    
+    prompt = f"""
+    You are the AetherHR Assistant. You are responsible for providing 
+    accurate, compliant, and professional guidance on regional labour laws 
+    (Malaysia, Singapore, Hong Kong) and internal company policies.
+    
+    YOUR RESPONSIBILITIES:
+    - Interpreting specific legal clauses from the provided context.
+    - Answering questions about employee benefits, probation, and leave policies.
+    - Providing clear, concise, and professional HR advice.
+    
+    GUIDELINES:
+    - Use ONLY the context provided below. 
+    - If the context doesn't contain the answer, say: "I'm sorry, I don't have that specific policy information in my current records."
+    - Maintain a professional and helpful tone.
+    
+    CONTEXT:
+    {context}
+    
+    USER QUERY: {query}
+    """
+    
+    response = llm.invoke(prompt)
+    return {"messages": [AIMessage(content=response.content)], "rag_context": context}
+
+
+    
