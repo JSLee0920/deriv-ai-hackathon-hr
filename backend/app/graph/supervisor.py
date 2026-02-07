@@ -17,7 +17,6 @@ workflow.add_conditional_edges(
     {"extractor": "extractor", "assistant": "assistant"}
 )
 
-workflow.set_entry_point("extractor")
 workflow.add_edge("extractor", "drafter")
 workflow.add_edge("drafter", END)
 workflow.add_edge("assistant", END)
