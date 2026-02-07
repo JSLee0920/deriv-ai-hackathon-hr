@@ -1,4 +1,5 @@
 import os
+from pathlib import Path
 import re
 from dotenv import load_dotenv
 
@@ -15,9 +16,20 @@ from langchain_huggingface import HuggingFaceEmbeddings
 
 llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", temperature=0)
 
+BASE_DIR = Path(__file__).resolve().parents[2] # Adjust depth based on file location
+DB_DIR = os.path.join(BASE_DIR, "chroma_db")
+
+print(f"--- [SYSTEM] Targeting ChromaDB at: {DB_DIR} ---")
+
+sqlite_path = os.path.join(DB_DIR, "chroma.sqlite3")
+if os.path.exists(sqlite_path):
+    print("--- Found existing database file. ---")
+else:
+    print(f"--- [ERROR] No DB found at {sqlite_path}. Check your ingestion script path! ---")
+
 # RAG
 embeddings = HuggingFaceEmbeddings(model_name="BAAI/bge-small-en-v1.5")
-vectorstore = Chroma(persist_directory="backend/chroma_db", embedding_function=embeddings)
+vectorstore = Chroma(persist_directory=DB_DIR, embedding_function=embeddings)
 retriever = vectorstore.as_retriever(search_kwargs={"k": 3})
 
 
