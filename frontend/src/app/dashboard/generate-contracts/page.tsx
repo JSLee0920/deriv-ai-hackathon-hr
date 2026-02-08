@@ -1,8 +1,8 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import React, { useState } from "react";
-import { FileText, Salad, Sparkles } from "lucide-react";
+import React, { useRef, useState } from "react";
+import { Download, FileText, Sparkles } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -15,6 +15,12 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import Markdown from "react-markdown";
+import markdown from "remark-parse";
+import docx from "remark-docx";
+import { unified } from "unified";
+import { saveAs } from "file-saver";
+
+const processor = unified().use(markdown).use(docx);
 
 const contractTypeLabels = [
   { label: "Employment Contract", value: "Employment Contract" },
@@ -47,10 +53,23 @@ export default function ContractsPage() {
   // For Testing
   const [output, setOutput] = useState<string>("");
 
-  // Replace with actual API call
+  const handleExportDOCX = async (text: string) => {
+    try {
+      const doc = await processor.process(text);
+      const arrayBuffer = await doc.result;
+      const blob = new Blob([arrayBuffer], {
+        type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      });
+      saveAs(blob, "generated_document.docx");
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const handleGenerate = async () => {
     try {
       setGenerating(true);
+      setOutput("");
 
       const formDataPayload = { ...formData, salary: "RM " + formData.salary };
 
@@ -71,6 +90,8 @@ export default function ContractsPage() {
       setGenerating(false);
     }
   };
+
+  const pdfRef = useRef(null);
 
   return (
     <div className="flex flex-col gap-8">
@@ -265,17 +286,38 @@ export default function ContractsPage() {
           </CardContent>
         </Card>
 
+        {/* Output Section */}
         <Card className="border-border bg-card lg:col-span-3 shadow-none">
-          <CardHeader>
+          <CardHeader className="flex flex-row items-center justify-between">
             <CardTitle className="flex items-center gap-2 text-lg text-foreground">
               <FileText className="h-5 w-5 text-primary" />
-              Generated Document
+              Document Preview
             </CardTitle>
+            {output && (
+              <Button
+                variant={"outline"}
+                size={"sm"}
+                onClick={() => handleExportDOCX(output)}
+                className="border-red-500 text-foreground hover:bg-secondary bg-transparent cursor-pointer"
+              >
+                <Download className="mr-2 h-4 w-4" />
+                Export
+              </Button>
+            )}
           </CardHeader>
+
           <CardContent>
-            <article className="markdown-body">
-              <Markdown>{output || "No document generated yet."}</Markdown>
-            </article>
+            <div className="flex items-center rounded-lg border-border bg-secondary px-3 py-3">
+              {output ? (
+                <article className="markdown-body" ref={pdfRef}>
+                  <Markdown>{output || "No document generated yet."}</Markdown>
+                </article>
+              ) : (
+                <p className="text-muted-foreground">
+                  Generate a document to see the preview here.
+                </p>
+              )}
+            </div>
           </CardContent>
         </Card>
       </div>
