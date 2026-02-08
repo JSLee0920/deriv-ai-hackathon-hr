@@ -1,4 +1,4 @@
-# AetherHR: AI-Powered HR operations
+# AetherHR: AI-Powered HR Operations
 
 AetherHR is an intelligent, agentic HR operations platform designed to transform HR from a bottleneck into a strategic asset by automating documents / contracts generation and proving HR conversational assistant for handling FAQS from employees.
 Developed for the Deriv AI Hackathon.
