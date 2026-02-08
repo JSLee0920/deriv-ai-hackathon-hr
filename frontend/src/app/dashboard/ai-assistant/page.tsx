@@ -5,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Bot, MessageSquare, Send, Sparkles, User } from "lucide-react";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import Markdown from "react-markdown";
 
 interface Message {
   id: number;
@@ -38,7 +39,13 @@ export default function AIAssistantPage() {
 
   const [input, setInput] = useState<string>("");
   const [isTyping, setIsTyping] = useState<boolean>(false);
-  // const scrollRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [messages, isTyping]);
 
   const handleSend = async (text?: string) => {
     const messageText = text || input.trim();
@@ -115,7 +122,7 @@ export default function AIAssistantPage() {
             </CardTitle>
           </CardHeader>
 
-          <div className="flex-1 overflow-y-auto p-6">
+          <div className="flex-1 overflow-y-auto p-6" ref={scrollRef}>
             <div className="flex flex-col gap-6">
               {messages.map((msg) => (
                 <div
@@ -144,9 +151,9 @@ export default function AIAssistantPage() {
                         : "bg-primary text-primary-foreground"
                     }`}
                   >
-                    <p className="whitespace-pre-line text-sm leading-relaxed">
-                      {msg.content}
-                    </p>
+                    <article className="whitespace-pre-line text-sm leading-relaxed">
+                      <Markdown>{msg.content}</Markdown>
+                    </article>
                     <p
                       className={`mt-1 text-xs ${msg.role === "user" ? "text-primary-foreground" : "text-muted-foreground"}`}
                     >
