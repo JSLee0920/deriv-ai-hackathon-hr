@@ -2,7 +2,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import React, { useState } from "react";
-import { FileText, Sparkles } from "lucide-react";
+import { FileText, Salad, Sparkles } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import {
   Select,
@@ -52,12 +52,14 @@ export default function ContractsPage() {
     try {
       setGenerating(true);
 
+      const formDataPayload = { ...formData, salary: "RM " + formData.salary };
+
       const response = await fetch("/api/generate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(formDataPayload),
       });
 
       const data = await response.json();
