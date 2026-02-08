@@ -19,7 +19,6 @@ Install the Python Libraries Required
 cd scripts
 
 pip install -r requirements.txt
-
 ```
 
 In the backend folder, create .env file with the following:
@@ -30,28 +29,23 @@ DATABASE_URL="postgresql://<username>:<password>@localhost:5432/mydb?schema=publ
 
 # Gemini API Key
 GOOGLE_API_KEY="your_api_key"
-
 ```
 
 Sync the database schema and generate the Python client
 
 ```
-
 python -m prisma db push
 python -m prisma generate
-
 ```
 
 ### Frontend Setup
 
 ```
-
 cd frontend
 
 # Install dependencies
 
 npm install
-
 ```
 
 ### Running the Application
@@ -61,7 +55,6 @@ Backend
 ```
 cd backend
 uvicorn app.main.app --reload
-
 ```
 
 Frontend
@@ -69,5 +62,4 @@ Frontend
 ```
 cd frontend
 npm run dev
-
 ```
