@@ -271,9 +271,6 @@ export default function ContractsPage() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {/* <pre className="max-h-150 overflow-auto rounded-md bg-secondary p-4 text-sm text-foreground">
-              {output || "No document generated yet."}
-            </pre> */}
             <article className="markdown-body">
               <Markdown>{output || "No document generated yet."}</Markdown>
             </article>

@@ -50,6 +50,55 @@ body {
   color: var(--color-foreground);
 }
 
+.markdown-body {
+  background-color: var(--color-card) !important;
+  color: var(--color-foreground) !important;
+}
+
+/* Headings */
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4,
+.markdown-body h5,
+.markdown-body h6 {
+  color: var(--color-foreground) !important;
+  background-color: transparent !important;
+}
+
+/* Paragraphs, lists, blockquotes, etc. */
+.markdown-body,
+.markdown-body p,
+.markdown-body li,
+.markdown-body ul,
+.markdown-body ol,
+.markdown-body blockquote,
+.markdown-body strong,
+.markdown-body em,
+.markdown-body del,
+.markdown-body code,
+.markdown-body pre {
+  color: var(--color-foreground) !important;
+  background-color: transparent !important;
+}
+
+/* Links */
+.markdown-body a {
+  color: var(--color-primary) !important;
+}
+
+/* Tables */
+.markdown-body table {
+  background: var(--color-card) !important;
+}
+
+.markdown-body th,
+.markdown-body td {
+  border-color: var(--color-border) !important;
+  color: var(--color-foreground) !important;
+  background-color: transparent !important;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

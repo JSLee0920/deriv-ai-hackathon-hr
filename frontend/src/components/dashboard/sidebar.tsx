@@ -36,7 +36,7 @@ function Sidebar() {
 
   return (
     <aside
-      className={`sticky flex h-screen flex-col justify-between border-r border-sidebar-border bg-sidebar transition-all duration-300 ${isCollapsed ? "w-16" : "w-64"}`}
+      className={`sticky top-0 flex h-screen flex-col justify-between border-r border-sidebar-border bg-sidebar transition-all duration-300 ${isCollapsed ? "w-16" : "w-64"}`}
     >
       {/* Logo */}
       <div>
